@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelVibes ✈ - Smart Travel Planner</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Leaflet CSS for maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <div class="mode-toggle" onclick="toggleDarkMode()">
+        <span id="mode-icon">🌙</span> Dark Mode
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="logo">TravelVibes ✈</h1>
+            <p class="subtitle">Your AI-Powered Travel Companion for Gen Z Wanderers</p>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Travel Form -->
+            <section id="travel-form" class="glass-card">
+                <h2 class="section-title">✨ Plan Your Next Adventure</h2>
+                <form id="plannerForm">
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="budget">💰 Budget (INR)</label>
+                            <input type="number" id="budget" name="budget" placeholder="e.g., 25000" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="days">📅 Number of Days</label>
+                            <input type="number" id="days" name="days" min="1" max="30" placeholder="e.g., 7" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="destination">🏖 Destination</label>
+                            <input type="text" id="destination" name="destination" placeholder="e.g., Goa, Manali, Paris" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="travelType">🌍 Travel Type</label>
+                            <select id="travelType" name="travelType" required class="themed-select">
+                                <option value="">Select Type</option>
+                                <option value="domestic">🇮🇳 Domestic</option>
+                                <option value="international">🌏 International</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="btn-text">Generate Plan</span>
+                            <span class="btn-icon">🚀</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="surpriseMe()">
+                            <span class="btn-text">Surprise Me</span>
+                            <span class="btn-icon">🎲</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Loading State -->
+            <section id="loading" class="glass-card loading-hidden">
+                <div class="loading-content">
+                    <div class="loading-spinner"></div>
+                    <p>✨ Crafting your perfect itinerary...</p>
+                </div>
+            </section>
+
+            <!-- Travel Plan Results -->
+            <section id="results" class="results-hidden">
+                <!-- Destination Header -->
+                <div id="destination-header" class="glass-card destination-header">
+                    <div class="destination-image">
+                        <img id="destination-photo" src="" alt="Destination" />
+                        <div class="destination-overlay">
+                            <h2 id="destination-name"></h2>
+                            <p id="destination-type"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weather Info -->
+                <div id="weather-card" class="glass-card">
+                    <h3 class="card-title">🌤 Current Weather</h3>
+                    <div id="weather-info" class="weather-grid">
+                        <!-- Weather data will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Budget Breakdown -->
+                <div id="budget-card" class="glass-card">
+                    <h3 class="card-title">💸 Smart Budget Breakdown</h3>
+                    <div id="budget-breakdown" class="budget-grid">
+                        <!-- Budget data will be inserted here -->
+                    </div>
+                    <!-- Budget Details Modal -->
+                    <div id="budget-modal" class="budget-modal budget-modal-hidden">
+                        <div class="budget-modal-content">
+                            <div class="budget-modal-header">
+                                <h3 id="modal-category-title">Category Details</h3>
+                                <button class="budget-modal-close" onclick="closeBudgetModal()">✕</button>
+                            </div>
+                            <div id="modal-category-content" class="budget-modal-body">
+                                <!-- Detailed breakdown will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tourist Attractions -->
+                <div id="attractions-card" class="glass-card">
+                    <h3 class="card-title">🏛 Must-Visit Attractions</h3>
+                    <div id="attractions-grid" class="attractions-grid">
+                        <!-- Attractions will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Map Section -->
+                <div id="map-card" class="glass-card">
+                    <h3 class="card-title">🗺️ Interactive Location Map</h3>
+                    <div id="location-map" class="location-map">
+                        <!-- Map will be rendered here -->
+                    </div>
+                    <div class="map-legend">
+                        <div class="legend-item">
+                            <span class="legend-marker destination-marker"></span>
+                            <span>Main Destination</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-marker attraction-marker"></span>
+                            <span>Must-Visit Attractions</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Travel Tips -->
+                <div id="tips-card" class="glass-card">
+                    <h3 class="card-title">💡 Pro Travel Tips</h3>
+                    <div class="tips-container">
+                        <div class="tips-section">
+                            <h4 class="tips-title">✅ Budget-Friendly Spots</h4>
+                            <ul id="budget-friendly" class="tips-list">
+                                <!-- Budget-friendly tips will be inserted here -->
+                            </ul>
+                        </div>
+                        <div class="tips-section">
+                            <h4 class="tips-title">❌ Avoid These (Overpriced)</h4>
+                            <ul id="avoid-spots" class="tips-list">
+                                <!-- Spots to avoid will be inserted here -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="saveItinerary()">
+                        <span class="btn-text">Save Itinerary</span>
+                        <span class="btn-icon">💾</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="planNewTrip()">
+                        <span class="btn-text">Plan New Trip</span>
+                        <span class="btn-icon">🆕</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Floating Chatbot -->
+    <div id="chatbot-toggle" class="chatbot-toggle" onclick="toggleChatbot()">
+        <span class="chatbot-icon">💬</span>
+    </div>
+
+    <!-- Chatbot Window -->
+    <div id="chatbot-window" class="chatbot-window chatbot-hidden">
+        <div class="chatbot-header">
+            <h3>🤖 TravelBot</h3>
+            <button class="chatbot-close" onclick="toggleChatbot()">✕</button>
+        </div>
+        <div id="chatbot-messages" class="chatbot-messages">
+            <div class="bot-message">
+                <p>Hey there! 👋 I'm your travel assistant. Ask me anything about your destination!</p>
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatbot-input" placeholder="Ask about your destination..." onkeypress="handleChatInput(event)">
+            <button onclick="sendChatMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast toast-hidden">
+        <span id="toast-message"></span>
+    </div>
+
+    <!-- Leaflet JS for maps -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
